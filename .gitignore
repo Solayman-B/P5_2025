@@ -1,1 +1,5 @@
 data/
+mlartifacts/
+mlruns/
+__pycache__/
+*.pyc
