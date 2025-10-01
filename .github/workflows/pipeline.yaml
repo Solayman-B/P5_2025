@@ -24,7 +24,7 @@ jobs:
           uv sync
       - name: Run unit tests with uv run pytest
         run: |
-          uv run pytest flask_api.py
+          uv run pytest test_flask_api.py
   deploy:
     name: Deploy to Heroku
     runs-on: ubuntu-latest
