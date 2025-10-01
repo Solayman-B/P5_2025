@@ -61,6 +61,10 @@ if label_names is None and model is not None and hasattr(model, 'estimators_'):
     except Exception:
         label_names = None
 
+@app.route('/')
+def home_page():
+    return 'Welcome to the P5 API'
+
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({
