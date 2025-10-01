@@ -138,7 +138,7 @@ def predict():
     except Exception:
         pass
 
-    # Select top-3 tags by probability
+    # Select top-3 tags with probability
     top_tags = []
     if prob_map:
         sorted_tags = sorted(prob_map.items(), key=lambda x: x[1], reverse=True)
