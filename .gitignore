@@ -2,4 +2,5 @@ data/
 mlartifacts/
 mlruns/
 __pycache__/
+requirements.txt
 *.pyc
