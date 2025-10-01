@@ -53,7 +53,7 @@ for lp in ("notebooks/labels.pkl", "labels.pkl", "notebooks/label_names.pkl"):
             label_names = pickle.load(lf)
         break
 
-# Si labels non fournis et modèle multi-output, créer des noms génériques
+# Si labels non fournis et modèle multi-output, créer des noms génériques.
 if label_names is None and model is not None and hasattr(model, 'estimators_'):
     try:
         n = len(model.estimators_)
