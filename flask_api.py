@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 
 import spacy, re
-# Load spaCy's English model
+# Load spaCy's English model.
 try:
     nlp = spacy.load("en_core_web_sm")
 except OSError:
