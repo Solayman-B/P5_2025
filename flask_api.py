@@ -32,8 +32,12 @@ def clean_text(text):
     return " ".join(tokens)
 
 
+# remove_html_tags: simple regex-based fallback (avoid BeautifulSoup dependency)
 def remove_html_tags(text):
-    return BeautifulSoup(text, "html.parser").get_text()
+    if not text:
+        return ""
+    text = re.sub(r'<[^>]+>', ' ', text)
+    return re.sub(r'\s+', ' ', text).strip()
 
 with open("notebooks/countvectorizer.pkl", "rb") as f:
     vectorizer = pickle.load(f)
@@ -91,32 +95,46 @@ def predict():
     try:
         if hasattr(model, 'predict_proba'):
             proba = model.predict_proba(X)
+            # Case: list (multioutput) or list with single array
             if isinstance(proba, list):
-                # MultiOutputClassifier: list of arrays (n_samples, n_classes) per estimator
-                for i, p in enumerate(proba):
-                    # p[0] is probability vector for first sample
-                    arr = p[0]
-                    # if binary, take index 1 as positive class
-                    if len(arr) > 1:
-                        prob_pos = float(arr[1])
-                    else:
-                        prob_pos = float(arr[0])
-                    tag = (label_names[i] if label_names and i < len(label_names) else f"tag_{i}")
-                    prob_map[tag] = prob_pos
-            else:
-                # Single estimator: map classes or labels
-                arr = proba[0]
-                classes = getattr(model, 'classes_', None)
-                if label_names and len(label_names) == len(arr):
-                    for i, tag in enumerate(label_names):
-                        prob_map[tag] = float(arr[i])
-                elif classes is not None:
-                    for i, c in enumerate(classes):
-                        prob_map[str(c)] = float(arr[i])
+                # If it's a multioutput list where each element corresponds to a label
+                if label_names and len(proba) == len(label_names):
+                    for i, p in enumerate(proba):
+                        arr = np.asarray(p)
+                        arr0 = arr[0] if arr.ndim == 2 else arr
+                        prob_pos = float(arr0[1]) if arr0.size > 1 else float(arr0[0])
+                        tag = label_names[i]
+                        prob_map[tag] = prob_pos
                 else:
-                    # fallback enumerate
-                    for i, val in enumerate(arr):
-                        prob_map[f"class_{i}"] = float(val)
+                    # Could be a single estimator returning [array_of_probs]
+                    arr = np.asarray(proba[0])
+                    arr0 = arr[0] if arr.ndim == 2 else arr
+                    if label_names and len(label_names) == arr0.size:
+                        for i, tag in enumerate(label_names):
+                            prob_map[tag] = float(arr0[i])
+                    else:
+                        classes = getattr(model, 'classes_', None)
+                        if classes is not None and len(classes) == arr0.size:
+                            for i, c in enumerate(classes):
+                                prob_map[str(c)] = float(arr0[i])
+                        else:
+                            for i, val in enumerate(arr0):
+                                prob_map[f'class_{i}'] = float(val)
+            else:
+                # proba is ndarray
+                arr = np.asarray(proba)
+                arr0 = arr[0] if arr.ndim == 2 else arr
+                if label_names and len(label_names) == arr0.size:
+                    for i, tag in enumerate(label_names):
+                        prob_map[tag] = float(arr0[i])
+                else:
+                    classes = getattr(model, 'classes_', None)
+                    if classes is not None and len(classes) == arr0.size:
+                        for i, c in enumerate(classes):
+                            prob_map[str(c)] = float(arr0[i])
+                    else:
+                        for i, val in enumerate(arr0):
+                            prob_map[f'class_{i}'] = float(val)
     except Exception:
         pass
 
