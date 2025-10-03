@@ -17,4 +17,5 @@ dependencies = [
     "pytest>=8.4.2",
     "scikit-learn>=1.6.1",
     "spacy>=3.8.7",
+    "streamlit>=1.50.0",
 ]
