@@ -8,7 +8,6 @@ env/
 venv/
 *.pyc
 notebooks/**
-notebooks
 notebooks/
 notebooks/*
 ./notebooks/
