@@ -1,0 +1,7 @@
+Respect du RGPD et gestion des données personnelles
+
+Dans ce projet, une attention particulière a été portée au respect du RGPD.
+Nous avons exclusivement utilisé des données publiques issues de Stack Overflow, accessibles via le Stack Exchange Data Explorer et l’API officielle.
+Seules les informations strictement nécessaires au projet ont été collectées : le titre, le corps de la question, les tags associés, la date de création et les scores.
+Aucune donnée permettant d’identifier directement ou indirectement les auteurs des questions (comme les identifiants utilisateurs, pseudos ou informations de profil) n’a été récupérée ni stockée.
+Cette approche garantit une utilisation responsable des données et une conformité avec les principes de minimisation et de finalité du RGPD.
